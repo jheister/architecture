@@ -1,6 +1,8 @@
 *.class
 *.log
 
+console.devmode.log
+
 # sbt specific
 dist/*
 target/
