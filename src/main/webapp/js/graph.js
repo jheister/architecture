@@ -34,7 +34,7 @@ var Graphing = {}; (function() {
   }
 
   Graphing.Cell = function(layer, properties) {
-    var group, box, text, edges = Array(), dragCallbacks = Array();
+    var group, box, text, edges = Array(), dragCallbacks = Array(), zoom;
 
     return {
         render: function() {
@@ -56,15 +56,30 @@ var Graphing = {}; (function() {
                           shadowOpacity: 0.2,
                           cornerRadius: 10
                         });
+
+          zoom = new Kinetic.Rect({
+                                   x: 0,
+                                   y: 0,
+                                   width: 20,
+                                   height: properties.height,
+                                   stroke: '#555',
+                                   strokeWidth: 5,
+                                   fill: '#ddd',
+                                   shadowColor: 'black',
+                                   shadowBlur: 10,
+                                   shadowOffset: [10, 10],
+                                   shadowOpacity: 0.2,
+                                   cornerRadius: 10
+                                         });
+
            group.on('dragend', function() { dragCallbacks.forEach(function(callback) { callback({name: properties.name, coordinates: {x: group.getX(), y: group.getY()}}); })});
            group.on('dragstart dragmove', function() {
              edges.forEach(function(edge) { edge(); });
            });
 
-           group.on('mouseover', properties.onClick)
+           zoom.on('mouseup', properties.onClick)
 
           group.add(box);
-
 
           text = new Kinetic.Text({
                          x: 0,
@@ -79,6 +94,8 @@ var Graphing = {}; (function() {
                        });
 
           group.add(text);
+          group.add(zoom);
+
           layer.add(group);
 
           layer.draw();
