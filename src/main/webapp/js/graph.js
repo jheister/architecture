@@ -60,6 +60,9 @@ var Graphing = {}; (function() {
            group.on('dragstart dragmove', function() {
              edges.forEach(function(edge) { edge(); });
            });
+
+           group.on('mouseover', properties.onClick)
+
           group.add(box);
 
 
