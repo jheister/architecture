@@ -4,13 +4,15 @@ import net.liftweb.actor.LiftActor
 import net.liftweb.util.Schedule
 import net.liftweb.util.TimeHelpers.TimeSpan._
 import net.liftweb.common.Logger
+import net.liftweb.json.{Printer, Extraction, JsonAST}
 
 class AnApplication(name: String, requestingTo: String) extends LiftActor with Logger {
   var nextDelay = 10
 
   protected def messageHandler = {
     case Blah => {
-      LogEventServer ! TimedWebServiceRequest(name, requestingTo)
+      implicit val formats = net.liftweb.json.DefaultFormats
+      LogEventServer ! Printer.compact(JsonAST.render(Extraction.decompose(TimedWebServiceRequest(name, requestingTo))))
       nextDelay = (nextDelay + 1) % 100
       Schedule.schedule(this, Blah, nextDelay);
     }
@@ -18,4 +20,4 @@ class AnApplication(name: String, requestingTo: String) extends LiftActor with L
 }
 
 
-case class TimedWebServiceRequest(from: String, to: String)
+case class TimedWebServiceRequest(application: String, request_app: String)
