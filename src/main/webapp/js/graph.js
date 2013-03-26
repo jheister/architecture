@@ -1,13 +1,13 @@
 var Graphing = {}; (function() {
-  Graphing.Graph = function(dragCallback) {
+  Graphing.Graph = function(dragCallback, width, height) {
     var stage, nodeLayer, edgeLayer, nodes = {}, edges = {};
 
     return {
       render: function() {
         stage = new Kinetic.Stage({
                       container: 'graphContainer',
-                      width: 800,
-                      height: 800
+                      width: width,
+                      height: height
                     });
 
 
@@ -45,8 +45,8 @@ var Graphing = {}; (function() {
           box = new Kinetic.Rect({
                           x: 0,
                           y: 0,
-                          width: 100,
-                          height: 50,
+                          width: properties.width,
+                          height: properties.height,
                           stroke: '#555',
                           strokeWidth: 5,
                           fill: '#ddd',
@@ -70,7 +70,7 @@ var Graphing = {}; (function() {
                          fontSize: 20,
                          fontFamily: 'Calibri',
                          fill: '#555',
-                         width: 100,
+                         width: properties.width,
                          padding: 15,
                          align: 'center'
                        });
@@ -82,11 +82,11 @@ var Graphing = {}; (function() {
         },
         getX: function() { return group.getX(); },
         getY: function() { return group.getY(); },
-        xCenter: function() { return group.getX() + 50 },
-        bottom: function() { return group.getY() + 50 + 10},
+        xCenter: function() { return group.getX() + (properties.width/2) },
+        bottom: function() { return group.getY() + properties.height + 10},
         top: function() { return group.getY() - 10},
-        right: function() { return group.getX() + 100 + 10},
-        yCenter: function() { return group.getY() + 25 },
+        right: function() { return group.getX() + properties.width + 10},
+        yCenter: function() { return group.getY() + (properties.height / 2) },
         left: function() { return group.getX() - 10 },
         addEdge: function(edge) {
           edges.push(edge);

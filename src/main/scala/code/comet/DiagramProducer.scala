@@ -13,7 +13,7 @@ import net.liftweb.json.{DefaultFormats}
 import scala.Some
 
 class DiagramProducer extends CometActor with CometListener with Logger {
-  val graph = Area(Coordinates(0,0), Coordinates(800, 600))
+  val graph = Area(Coordinates(0,0), Coordinates(1600, 800))
   val nodes: scala.collection.mutable.Map[String, Cell] = scala.collection.mutable.Map()
   val edges: scala.collection.mutable.Map[String, Edge] = scala.collection.mutable.Map()
 
@@ -57,7 +57,7 @@ class DiagramProducer extends CometActor with CometListener with Logger {
     JsCmds.Noop
   }).toJsCmd
 
-  def render = ".init *" #> Run("var graph = new Graphing.Graph(function(val) { %s }); graph.render();".format(cmd)) &
+  def render = ".init *" #> Run("var graph = new Graphing.Graph(function(val) { %s }, %s, %s); graph.render();".format(cmd, graph.end.x, graph.end.y)) &
                ".nodes *" #> JsCmds.seqJsToJs(nodes.values.map(_.add).toSeq) &
                ".edges *" #> JsCmds.seqJsToJs(edges.values.map(_.add).toSeq)
 }
