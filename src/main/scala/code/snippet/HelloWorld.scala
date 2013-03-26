@@ -31,9 +31,8 @@ class HelloWorld extends Logger {
     Script(JsRaw("var sendMessage = " + sess.clientActorFor(backEnd, (value: JValue) => {
       implicit val format = DefaultFormats
 
-      value.extractOpt[Foo].map(Full(_)).getOrElse(Empty)
-    }).toJsCmd).cmd &
-           JsRaw("function receive(value) { alert(value.bar); }").cmd)
+      value.extractOpt.map(Full(_)).getOrElse(Empty)
+    }).toJsCmd).cmd & JsRaw("function receive(value) { alert(value.bar); }").cmd)
   }) openOr NodeSeq.Empty
 }
 

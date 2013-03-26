@@ -10,6 +10,7 @@ import sitemap._
 import Loc._
 import net.liftmodules.JQueryModule
 import net.liftweb.http.js.jquery._
+import code.comet.{AnApplication, Blah, LogEventServer}
 
 
 /**
@@ -54,5 +55,8 @@ class Boot {
     JQueryModule.InitParam.JQuery=JQueryModule.JQuery172
     JQueryModule.init()
 
+    Schedule.schedule(new AnApplication("Application A", "Application B"), Blah, 0)
+    Schedule.schedule(new AnApplication("Application C", "Application B"), Blah, 1000)
+    Schedule.schedule(new AnApplication("Application D", "Application C"), Blah, 1000)
   }
 }
