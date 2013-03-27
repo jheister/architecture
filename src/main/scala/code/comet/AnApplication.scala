@@ -13,7 +13,7 @@ class AnApplication(name: String, requestingTo: String) extends LiftActor with L
     case Blah => {
       implicit val formats = net.liftweb.json.DefaultFormats
       LogEventServer ! Printer.compact(JsonAST.render(Extraction.decompose(TimedWebServiceRequest(name, requestingTo))))
-      nextDelay = (nextDelay + 1) % 100
+      nextDelay = (nextDelay + 1) % 400
       Schedule.schedule(this, Blah, nextDelay);
     }
   }

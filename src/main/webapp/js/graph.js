@@ -103,11 +103,11 @@ var Graphing = {}; (function() {
         getX: function() { return group.getX(); },
         getY: function() { return group.getY(); },
         xCenter: function() { return group.getX() + (properties.width/2) },
-        bottom: function() { return group.getY() + properties.height + 10},
-        top: function() { return group.getY() - 10},
-        right: function() { return group.getX() + properties.width + 10},
+        bottom: function() { return group.getY() + properties.height},
+        top: function() { return group.getY()},
+        right: function() { return group.getX() + properties.width},
         yCenter: function() { return group.getY() + (properties.height / 2) },
-        left: function() { return group.getX() - 10 },
+        left: function() { return group.getX()},
         addEdge: function(edge) {
           edges.push(edge);
         },
@@ -125,11 +125,20 @@ var Graphing = {}; (function() {
       minus: function(coordinates) {
         return new Graphing.Coordinates(x - coordinates.getX(), y - coordinates.getY());
       },
+      plus: function(coordinates) {
+        return new Graphing.Coordinates(x + coordinates.getX(), y + coordinates.getY());
+      },
       getX: function() {
         return x;
       },
       getY: function() {
         return y;
+      },
+      divideBy: function(d) {
+        return new Graphing.Coordinates(x / d, y / d)
+      },
+      times: function(d) {
+        return new Graphing.Coordinates(x * d, y * d);
       },
       angle: function() {
         var theAngle = Math.atan(y / x) * (180/Math.PI);
@@ -144,7 +153,7 @@ var Graphing = {}; (function() {
   }
 
   Graphing.Edge = function(layer, from, to, weight) {
-    var line, arrowHead, update, figureOutStartAndEnd, angle;
+    var line, arrowHead, update, figureOutStartAndEnd, figureOutStartAndEnd1, angle;
 
     update = function() {
       var points = figureOutStartAndEnd();
@@ -157,6 +166,15 @@ var Graphing = {}; (function() {
     }
 
     figureOutStartAndEnd = function() {
+      var points = figureOutStartAndEnd1();
+
+      var start = new Graphing.Coordinates(points[2], points[3]).minus(new Graphing.Coordinates(points[0], points[1])).divideBy(10).plus(new Graphing.Coordinates(points[0], points[1]));
+      var end = new Graphing.Coordinates(points[2], points[3]).minus(new Graphing.Coordinates(points[2], points[3]).minus(new Graphing.Coordinates(points[0], points[1])).divideBy(10));
+
+      return [start.getX(), start.getY(), end.getX(), end.getY()];
+    }
+
+    figureOutStartAndEnd1 = function() {
     var theAngle = angle();
 
     if (((theAngle > 45) && (theAngle < 135)) || ((theAngle > 225) && (theAngle < 315))) {
