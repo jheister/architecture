@@ -1,4 +1,4 @@
-- Shorten arrows along their line
+- cleanup clinet & server to make it be able to exist several times on screen
 - draw arrows next to eachother when there are several per side
 - create zoom graph of instances
 - zoom on arrow

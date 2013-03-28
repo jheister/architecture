@@ -215,20 +215,20 @@ var Graphing = {}; (function() {
                            lineJoin: 'round'
                            });
 
-        arrowHead = new Kinetic.RegularPolygon({
-                x: points[2],
-                y: points[3],
-                sides: 3,
-                radius: (10 + weight),
+        arrowHead = new Kinetic.Polygon({
+                points: [points[2], points[3], points[2] + 5, points[3] + 10, points[2] - 5, points[3] + 10],
                 stroke: '#555',
-                strokeWidth: 5,
+                strokeWidth: (5 + weight),
                 fill: '#555',
                 shadowColor: 'black',
                 shadowBlur: 10,
                 shadowOffset: [10, 10],
                 shadowOpacity: 0.2,
-                cornerRadius: 10
+                cornerRadius: 10,
+                offset: [points[2], points[3]]
               });
+        arrowHead.setX(points[2]);
+        arrowHead.setY(points[3]);
 
         arrowHead.setRotationDeg(Graphing.Coordinates(points[2], points[3]).minus(Graphing.Coordinates(points[0], points[1])).angle() + 90);
 
@@ -238,7 +238,7 @@ var Graphing = {}; (function() {
       },
       update: function(newWeight) {
         line.setStrokeWidth(5 + newWeight);
-        arrowHead.setRadius(10 + newWeight);
+        arrowHead.setStrokeWidth(5 + newWeight);
         layer.draw();
       }
     }
