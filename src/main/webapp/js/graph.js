@@ -16,19 +16,21 @@ var Graphing = {}; (function() {
         stage.add(edgeLayer);
         stage.add(nodeLayer);
       },
-      addNode: function(prop) {
-        var cell = new Graphing.Cell(nodeLayer, prop);
-        cell.addDragCallback(dragCallback)
-        nodes[prop.name] = cell;
-        cell.render();
-      },
-      addEdge: function(prop) {
-        var edge = new Graphing.Edge(edgeLayer, nodes[prop.from], nodes[prop.to], prop.weight);
-        edges[prop.from + prop.to] = edge;
-        edge.render();
-      },
-      updateEdge: function(prop) {
-        edges[prop.from + prop.to].update(prop.weight);
+      processMessage: function(message) {
+        if (message.newCell != null) {
+          var cell = new Graphing.Cell(nodeLayer, message.newCell);
+          cell.addDragCallback(dragCallback)
+          nodes[message.newCell.name] = cell;
+          cell.render();
+        }
+        if (message.newArrow != null) {
+          var edge = new Graphing.Edge(edgeLayer, nodes[message.newArrow.from], nodes[message.newArrow.to], message.newArrow.weight);
+          edges[message.newArrow.from + message.newArrow.to] = edge;
+          edge.render();
+        }
+        if (message.updatedArrow != null) {
+          edges[message.updatedArrow.from + message.updatedArrow.to].update(message.updatedArrow.weight);
+        }
       }
     }
   }
@@ -38,8 +40,8 @@ var Graphing = {}; (function() {
 
     return {
         render: function() {
-          group = new Kinetic.Group({ x: properties.x,
-                                      y: properties.y,
+          group = new Kinetic.Group({ x: properties.coordinates.x,
+                                      y: properties.coordinates.y,
                                       draggable: true });
 
           box = new Kinetic.Rect({
