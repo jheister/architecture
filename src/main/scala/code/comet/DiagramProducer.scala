@@ -19,7 +19,7 @@ class DiagramProducer extends CometActor with CometListener with Logger {
   val nodes: scala.collection.mutable.Map[String, Cell] = scala.collection.mutable.Map()
   val edges: scala.collection.mutable.Map[String, Edge] = scala.collection.mutable.Map()
 
-  var theGraph = new Graph(1600, 800, nodes.values.toSeq, edges.values.toSeq)
+  var theGraph = new Graph(1600, 800, nodes.values.toSeq, edges.values.toSeq, this)
 
   protected def registerWith = LogEventServer
 
@@ -49,14 +49,14 @@ class DiagramProducer extends CometActor with CometListener with Logger {
       }
     }
 
-    case Dropped(name, coordinates) => {
-      info("XXXXXXXXXXXXXXXXXXXXXXXXXXXX: Dropped %s at %s".format(name, coordinates))
-      nodes.get(name).map(_.copy(coordinates = coordinates)).foreach(nodes.put(name, _))
+    case Full(c: Cell) => {
+      info("XXXXXXXXXXXXXXXXXXXXXXXXXXXX: Dropped %s at %s".format(c.name, c.coordinates))
+      nodes.put(c.name, c)
     }
   }
 
   def render = {
-    theGraph = new Graph(1600, 800, nodes.values.toSeq, edges.values.toSeq)
+    theGraph = new Graph(1600, 800, nodes.values.toSeq, edges.values.toSeq, this)
     info("XXXXXXXXXXXXXXXXXXXXXX: Rendering!")
     nodes.values.foreach(theGraph.addCell)
     ".graph" #> theGraph.render
@@ -81,22 +81,15 @@ object DiagramProducer {
   }
 }
 
-class Graph(width: Int, height: Int, cells: Seq[Cell], arrows: Seq[Edge]) extends Logger {
+class Graph(width: Int, height: Int, cells: Seq[Cell], arrows: Seq[Edge], backEnd: LiftActor) extends Logger {
   val graph = Area(Coordinates(0,0), Coordinates(width, height))
 
   val name = Helpers.nextFuncName
 
-  val backEnd: LiftActor = new ScopedLiftActor {
-    implicit val formats = DefaultFormats
-
-    override def lowPriority = {
-      case e: JValue => info("XXXXXX: Received a: " + e.extract[Cell])
-    }
-  }
-
   val ui: Box[LiftActor] = S.session.map(_.serverActorForClient(name + ".processMessage"))
 
-  val client: Box[JsExp] = S.session.map(_.clientActorFor(backEnd))
+  implicit val formats = DefaultFormats
+  val client: Box[JsExp] = S.session.map(_.clientActorFor(backEnd, e => e.extractOpt[Cell].map(Full(_))))
 
   def render = {
     import json._
