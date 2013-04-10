@@ -13,6 +13,9 @@ class AnApplication(name: String, requestingTo: String) extends LiftActor with L
     case Blah => {
       implicit val formats = net.liftweb.json.DefaultFormats
       LogEventServer ! Printer.compact(JsonAST.render(Extraction.decompose(TimedWebServiceRequest(name, requestingTo))))
+
+      AmqpPublisher !  Extraction.decompose(TimedWebServiceRequest(name, requestingTo))
+
       nextDelay = (nextDelay + 1) % 300
       Schedule.schedule(this, Blah, nextDelay);
     }

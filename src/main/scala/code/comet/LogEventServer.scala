@@ -6,6 +6,8 @@ import net.liftweb.util.{TimeHelpers, Schedule}
 import net.liftweb.util.TimeHelpers.TimeSpan
 import util.Random
 import net.liftweb.json.JsonAST
+import net.liftweb.json.JsonAST.JValue
+import net.liftmodules.amqp.AMQPMessage
 
 object LogEventServer extends LiftActor with ListenerManager {
   protected def createUpdate = null
@@ -15,10 +17,10 @@ object LogEventServer extends LiftActor with ListenerManager {
   val requestRates: scala.collection.mutable.Map[String, List[Long]] = scala.collection.mutable.Map()
 
   override def lowPriority = {
-    case json: String => {
+    case AMQPMessage(json: JValue) => {
       implicit val formats = net.liftweb.json.DefaultFormats
 
-      val possibleRequest = net.liftweb.json.parse(json).extractOpt[TimedWebServiceRequest]
+      val possibleRequest = json.extractOpt[TimedWebServiceRequest]
 
       possibleRequest.foreach(handle)
     }
