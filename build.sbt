@@ -17,15 +17,15 @@ unmanagedResourceDirectories in Test <+= (baseDirectory) { _ / "src/main/webapp"
 scalacOptions ++= Seq("-deprecation", "-unchecked")
 
 libraryDependencies ++= {
-  val liftVersion = "3.0-SNAPSHOT"
+  val liftVersion = "2.5-RC4"
   Seq(
     "net.liftweb"       %% "lift-webkit"        % liftVersion        % "compile",
-    "net.liftmodules"   %% "lift-jquery-module" % (liftVersion + "-2.2-SNAPSHOT"),
-    "net.liftmodules"   %% "widgets" % (liftVersion + "-1.2-SNAPSHOT"),
+    "net.liftmodules"   %% "lift-jquery-module" % (liftVersion + "-2.3"),
+    "net.liftmodules"   %% "widgets" % (liftVersion + "-1.3"),
     "org.eclipse.jetty" % "jetty-webapp"        % "8.1.7.v20120910"  % "container,test",
     "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "container,test" artifacts Artifact("javax.servlet", "jar", "jar"),
     "ch.qos.logback"    % "logback-classic"     % "1.0.6",
-    "org.specs2"        %% "specs2"             % "1.15-SNAPSHOT"           % "test"
+    "org.specs2"        %% "specs2"             % "1.14"           % "test"
   )
 }
 
