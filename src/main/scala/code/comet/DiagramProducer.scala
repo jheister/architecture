@@ -50,10 +50,16 @@ class DiagramProducer extends CometActor with CometListener with Logger {
     }
 
     case Dropped(name, coordinates) => {
-      info("XXXXXXXXXXXXXXXXXXXXXXXXXXXX: Dropped %s at %s".format(name, coordinates))
+      info("Dropped %s at %s".format(name, coordinates))
       nodes.get(name).map(_.copy(coordinates = coordinates)).foreach(nodes.put(name, _))
     }
   }
+
+  val cmd: String = SHtml.jsonCall(JsRaw("val"), (value: JValue) => {
+    implicit val formats = DefaultFormats
+    S.session.get.findComet("DiagramProducer").foreach(_ ! value.extract[Dropped])
+    JsCmds.Noop
+  }).toJsCmd
 
   def render = {
     theGraph = new Graph(1600, 800, nodes.values.toSeq, edges.values.toSeq)
@@ -81,18 +87,12 @@ object DiagramProducer {
   }
 }
 
-class Graph(width: Int, height: Int, cells: Seq[Cell], arrows: Seq[Edge]) extends Logger {
+class Graph(width: Int, height: Int, cells: Seq[Cell], arrows: Seq[Edge]) {
   val graph = Area(Coordinates(0,0), Coordinates(width, height))
 
   val name = Helpers.nextFuncName
 
-  val backEnd: LiftActor = new ScopedLiftActor {
-    implicit val formats = DefaultFormats
-
-    override def lowPriority = {
-      case e: JValue => info("XXXXXX: Received a: " + e.extract[Cell])
-    }
-  }
+  val backEnd: LiftActor = new ScopedLiftActor {}
 
   val ui: Box[LiftActor] = S.session.map(_.serverActorForClient(name + ".processMessage"))
 

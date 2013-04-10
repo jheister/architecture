@@ -74,7 +74,7 @@ var Graphing = {}; (function() {
                                    cornerRadius: 10
                                          });
 
-           group.on('dragend', function() { dragCallbacks.forEach(function(callback) { callback({name: properties.name, coordinates: {x: group.getX(), y: group.getY()}, width: properties.width, height: properties.height, id: properties.id}); })});
+           group.on('dragend', function() { dragCallbacks.forEach(function(callback) { callback({name: properties.name, coordinates: {x: group.getX(), y: group.getY()}}); })});
            group.on('dragstart dragmove', function() {
              edges.forEach(function(edge) { edge(); });
            });
