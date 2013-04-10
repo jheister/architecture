@@ -19,7 +19,7 @@ class DiagramProducer extends CometActor with CometListener with Logger {
   val nodes: scala.collection.mutable.Map[String, Cell] = scala.collection.mutable.Map()
   val edges: scala.collection.mutable.Map[String, Edge] = scala.collection.mutable.Map()
 
-  var theGraph = new Graph(1600, 800, nodes.values.toSeq, edges.values.toSeq)
+  val theGraph = new Graph(1600, 800, nodes.values.toSeq, edges.values.toSeq)
 
   protected def registerWith = LogEventServer
 
@@ -62,7 +62,6 @@ class DiagramProducer extends CometActor with CometListener with Logger {
   }).toJsCmd
 
   def render = {
-    theGraph = new Graph(1600, 800, nodes.values.toSeq, edges.values.toSeq)
     info("XXXXXXXXXXXXXXXXXXXXXX: Rendering!")
     nodes.values.foreach(theGraph.addCell)
     ".graph" #> theGraph.render
@@ -106,10 +105,7 @@ class Graph(width: Int, height: Int, cells: Seq[Cell], arrows: Seq[Edge]) {
       case Full(backEndProxy) => Script(Run("var " + name + " = new Graphing.Graph(%s, %s, %s)".format(backEndProxy.toJsCmd, graph.end.x, graph.end.y)) &
                                         Run(name + ".render()") &
                                         cells.map(cell => {
-                                          Run(name + ".processMessage(%s)".format(Serialization.write(AddCell(cell))))
-                                        }) &
-                                        arrows.map(arrow => {
-                                          Run(name + ".processMessage(%s)".format(Serialization.write(AddArrow(arrow))))
+                                          Run(name + ".processMessage(%s)".formatted(Serialization.write(cell)))
                                         }))
       case _ => <span>Failed to initialize</span>
     }
