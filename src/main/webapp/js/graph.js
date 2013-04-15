@@ -153,13 +153,15 @@ var Graphing = {}; (function() {
   }
 
   Graphing.Edge = function(layer, from, to, weight) {
-    var line, arrowHead, update, figureOutStartAndEnd, figureOutStartAndEnd1, angle;
+    var line, arrowHead, update, figureOutStartAndEnd, figureOutStartAndEnd1, angle, text;
 
     update = function() {
       var points = figureOutStartAndEnd();
       line.setPoints(points);
       arrowHead.setX(points[2]);
       arrowHead.setY(points[3]);
+      text.setX(((points[2] -points[0]) / 2) + points[0]);
+      text.setY(((points[3] - points[1]) / 2) + points[1])
 
       arrowHead.setRotationDeg(Graphing.Coordinates(points[2], points[3]).minus(Graphing.Coordinates(points[0], points[1])).angle() + 90);
       layer.draw();
@@ -230,15 +232,29 @@ var Graphing = {}; (function() {
         arrowHead.setX(points[2]);
         arrowHead.setY(points[3]);
 
+       text = new Kinetic.Text({
+                      x: ((points[2] -points[0]) / 2) + points[0],
+                      y: ((points[3] - points[1]) / 2) + points[1],
+                      text: weight,
+                      fontSize: 20,
+                      fontFamily: 'Calibri',
+                      fill: '#555',
+                      width: 50,
+                      padding: 15,
+                      align: 'center'
+                    });
+
         arrowHead.setRotationDeg(Graphing.Coordinates(points[2], points[3]).minus(Graphing.Coordinates(points[0], points[1])).angle() + 90);
 
         layer.add(line);
         layer.add(arrowHead);
+        layer.add(text);
         layer.draw();
       },
       update: function(newWeight) {
         line.setStrokeWidth(5 + newWeight);
         arrowHead.setStrokeWidth(5 + newWeight);
+        text.setText(newWeight);
         layer.draw();
       }
     }
