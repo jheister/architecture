@@ -7,9 +7,11 @@ import net.liftweb.json.JsonAST
 import net.liftweb.common.Logger
 import net.liftweb.actor.LiftActor
 import java.nio.charset.Charset
+import java.util
 
 class QueueListener extends AMQPDispatcher(new ConnectionFactory(), "localhost", 5672) with Logger {
   def configure(channel: Channel) {
+    channel.exchangeDeclare("blah", "fanout", false, false, true, new util.HashMap[String, Object]())
     channel.queueDeclare("blahQueue", false)
     channel.queueBind("blahQueue", "blah", "*")
     channel.basicConsume("blahQueue", false, new JsonConsumer(channel, this))
