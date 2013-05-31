@@ -34,6 +34,7 @@ import net.liftweb.json.JsonAST.JValue
 import net.liftweb.json.DefaultFormats
 import net.liftweb.http.js.jquery.JqJsCmds.ModalDialog
 import net.liftmodules.extras.JsExtras.CallNew
+import xml.{Elem, NodeSeq}
 
 case class DiagramWidget(width: Int,
                          height: Int,
@@ -51,10 +52,13 @@ case class DiagramWidget(width: Int,
       onDrop(value.extract[Dropped])
     })
 
-    JsCrVar(name, CallNew("Graphing.Graph", AnonFunc("val", dropFunction), Num(width), Num(height))) &
-    Run(name + ".render()") &
-    nodes.values.map(addCell).toSeq &
-    edges.values.map(addEdge).toSeq
+    <div id={name}>
+      <script>{(JsCrVar(name, CallNew("Graphing.Graph", AnonFunc("val", dropFunction), Num(width), Num(height), name)) &
+        Run(name + ".render()") &
+        nodes.values.map(addCell).toSeq &
+        edges.values.map(addEdge).toSeq).toJsCmd}
+      </script>
+    </div>
   }
 
   def add(cell : Cell): Option[JsCmd] = {

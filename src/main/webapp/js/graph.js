@@ -1,11 +1,11 @@
 var Graphing = {}; (function() {
-  Graphing.Graph = function(dragCallback, width, height) {
+  Graphing.Graph = function(dragCallback, width, height, graphContainer) {
     var stage, nodeLayer, edgeLayer, nodes = {}, edges = {};
 
     return {
       render: function() {
         stage = new Kinetic.Stage({
-                      container: 'graphContainer',
+                      container: graphContainer,
                       width: width,
                       height: height
                     });

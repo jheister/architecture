@@ -42,7 +42,7 @@ class DiagramProducer extends CometActor with CometListener with Logger {
     </div>)
   }
 
-  def render = ".init *" #> (widget.init)
+  def render = ".theWidget" #> widget.init
 }
 
 case class AddNode(name: String)
