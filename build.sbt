@@ -21,6 +21,7 @@ libraryDependencies ++= {
   Seq(
     "net.liftweb"       %% "lift-webkit"        % liftVersion        % "compile",
     "net.liftmodules"   %% "lift-jquery-module" % (liftVersion + "-2.3"),
+    "net.liftmodules"   %% "extras_2.5"         % "0.1",
     "net.liftmodules"   %% "amqp" % (liftVersion + "-1.2"),
     "net.liftmodules"   %% "widgets" % (liftVersion + "-1.3"),
     "org.eclipse.jetty" % "jetty-webapp"        % "8.1.7.v20120910"  % "container,test",

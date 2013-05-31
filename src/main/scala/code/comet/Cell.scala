@@ -13,15 +13,4 @@ import net.liftweb.http.js.jquery.JqJsCmds.ModalDialog
 case class Cell(name: String, coordinates: Coordinates, width: Int = 200, height: Int = 50, id: String = nextFuncName) {
   def x = coordinates.x
   def y = coordinates.y
-
-  def add: JsCmd = {
-    val onClick = AnonFunc(SHtml.ajaxCall(JsRaw(""), (value: String) => {
-      ModalDialog(<div>
-        <span>Zoom in on {name}</span>
-        {SHtml.ajaxButton("Close", () => JqJsCmds.Unblock)}
-      </div>)
-    })).toJsCmd
-
-    Run("graph.addNode({x: %s, y: %s, name: '%s', width: %s, height: %s, onClick: %s})".format(x, y, name, width, height, onClick))
-  }
 }
